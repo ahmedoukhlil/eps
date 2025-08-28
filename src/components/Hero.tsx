@@ -1,18 +1,25 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services');
     if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
+      const offset = 80; // Account for fixed navbar
+      const elementPosition = servicesSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
   return (
-    <section 
-      id="home" 
+    <section
+      id="home"
       className="hero"
       style={{
         backgroundImage: `url('/hero-img.HEIC')`,
@@ -23,21 +30,21 @@ const Hero: React.FC = () => {
     >
       {/* Overlay */}
       <div className="hero-overlay" />
-      
+
       {/* Background Pattern */}
       <div className="hero-pattern" />
-      
-      {/* Floating Elements */}
+
+      {/* Floating Elements - Optimized for mobile */}
       <motion.div
-        className="floating-element floating-element-1"
         animate={{ y: [-10, 10, -10] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      
-      <motion.div
-        className="floating-element floating-element-2"
-        animate={{ y: [10, -10, 10] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="floating-element floating-element-1"
+      />
+
+      <motion.div
+        animate={{ y: [10, -10, 10] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="floating-element floating-element-2"
       />
 
       {/* Main Content */}
@@ -56,7 +63,7 @@ const Hero: React.FC = () => {
           >
             EPS.Sarl
           </motion.h1>
-          
+
           <motion.div
             initial={{ opacity: 0, width: 0 }}
             animate={{ opacity: 1, width: "100px" }}
@@ -64,7 +71,7 @@ const Hero: React.FC = () => {
             className="hero-underline"
           />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,7 +97,7 @@ const Hero: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1.4, ease: "easeOut" }}
             >
-              , 
+              ,
             </motion.span>
             <motion.span
               initial={{ opacity: 0, x: 20 }}
@@ -105,7 +112,7 @@ const Hero: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1.8, ease: "easeOut" }}
             >
-              & 
+              &
             </motion.span>
             <motion.span
               initial={{ opacity: 0, x: -20 }}
@@ -116,7 +123,7 @@ const Hero: React.FC = () => {
               Manutention Aéroportuaire
             </motion.span>
           </motion.p>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -136,7 +143,7 @@ const Hero: React.FC = () => {
           <motion.a
             href="#contact"
             className="btn-primary hero-cta-btn"
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
             }}
@@ -157,21 +164,28 @@ const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Outside hero-content for proper positioning */}
       <motion.div
         className="scroll-indicator"
         initial={{ opacity: 0, y: 0 }}
-        animate={{ 
-          opacity: 1, 
-          y: [0, 10, 0] 
+        animate={{
+          opacity: 1,
+          y: [0, 10, 0]
         }}
-        transition={{ 
-          duration: 2, 
-          repeat: Infinity, 
+        transition={{
+          duration: 2,
+          repeat: Infinity,
           ease: "easeInOut",
           opacity: { duration: 1, delay: 3, ease: "easeOut" }
         }}
         onClick={scrollToServices}
+        style={{
+          position: 'absolute',
+          bottom: '2rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 4
+        }}
       >
         <motion.span
           animate={{ opacity: [0.5, 1, 0.5] }}

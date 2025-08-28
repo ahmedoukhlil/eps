@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   ArrowRight,
@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 
 const Services: React.FC = () => {
+  const [expandedService, setExpandedService] = useState<number | null>(null);
+
   const services = [
     {
       id: 1,
@@ -54,166 +56,172 @@ const Services: React.FC = () => {
     }
   ];
 
+  const toggleService = (serviceId: number) => {
+    setExpandedService(expandedService === serviceId ? null : serviceId);
+  };
+
   return (
-    <section id="services" className="services">
+    <section id="services" className="services section-padding">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
+          style={{ textAlign: 'center', marginBottom: '3rem' }}
         >
-          <h2 className="services-title">Nos Services</h2>
-          <p style={{ textAlign: 'center', fontSize: '1.125rem', color: '#6b7280', marginBottom: '3rem' }}>
-            Des solutions professionnelles adaptées à vos besoins
+          <h2 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            color: '#003366',
+            marginBottom: '1rem'
+          }}>
+            Nos Services
+          </h2>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#666',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            Des solutions complètes pour répondre à tous vos besoins professionnels
           </p>
         </motion.div>
 
         <div className="services-grid">
-          {services.map((service) => (
+          {services.map((service, index) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: service.id * 0.1 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ y: -10 }}
               className="service-card"
               style={{
-                background: 'white',
-                borderRadius: '1rem',
-                padding: '2rem',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #e5e7eb',
-                transition: 'all 0.3s ease',
+                cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden'
               }}
+              onClick={() => toggleService(service.id)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              {/* Service Icon */}
-              <div style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                background: service.color,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '1.5rem'
-              }}>
-                <service.icon size={30} color="white" />
-              </div>
+              <motion.div
+                className="service-icon"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1.5rem',
+                  background: service.color,
+                  transition: 'all 0.3s ease'
+                }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <service.icon size={40} color="white" />
+              </motion.div>
 
-              {/* Service Title */}
-              <h3 style={{
-                fontSize: '1.5rem',
+              <h3 className="service-title" style={{
+                fontSize: '1.75rem',
                 fontWeight: '600',
-                color: '#1f2937',
-                marginBottom: '1rem'
+                color: '#003366',
+                marginBottom: '1rem',
+                textAlign: 'center'
               }}>
                 {service.title}
               </h3>
 
-              {/* Service Description */}
-              <p style={{
-                color: '#6b7280',
+              <p className="service-description" style={{
+                fontSize: '1rem',
+                color: '#666',
+                lineHeight: '1.6',
                 marginBottom: '1.5rem',
-                lineHeight: '1.6'
+                textAlign: 'center'
               }}>
                 {service.description}
               </p>
 
-              {/* Service Features */}
-              <ul style={{
-                listStyle: 'none',
-                marginBottom: '2rem'
-              }}>
-                {service.features.map((feature, index) => (
-                  <li key={index} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '0.5rem',
-                    color: '#4b5563'
-                  }}>
-                    <div style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: service.color,
-                      marginRight: '0.75rem',
-                      flexShrink: 0
-                    }} />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              <AnimatePresence>
+                {expandedService === service.id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div className="service-features" style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                      gap: '1rem',
+                      marginBottom: '1.5rem'
+                    }}>
+                      {service.features.map((feature, featureIndex) => (
+                        <motion.div
+                          key={featureIndex}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: featureIndex * 0.1 }}
+                          className="service-feature"
+                          style={{
+                            padding: '0.75rem 1rem',
+                            background: 'rgba(0, 51, 102, 0.05)',
+                            borderRadius: '0.5rem',
+                            border: '1px solid rgba(0, 51, 102, 0.1)',
+                            fontSize: '0.9rem',
+                            color: '#003366',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}
+                        >
+                          <div style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            background: service.color,
+                            flexShrink: 0
+                          }} />
+                          {feature}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              {/* CTA Button */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 className="btn-primary"
                 style={{
                   width: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.5rem'
+                  gap: '0.5rem',
+                  fontSize: '0.95rem',
+                  padding: '0.875rem 1.5rem'
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleService(service.id);
                 }}
               >
-                En savoir plus
-                <ArrowRight size={20} />
+                {expandedService === service.id ? 'Masquer les détails' : 'Voir les détails'}
+                <motion.div
+                  animate={{ rotate: expandedService === service.id ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ArrowRight size={18} />
+                </motion.div>
               </motion.button>
-
-              {/* Decorative Element */}
-              <div style={{
-                position: 'absolute',
-                top: '0',
-                right: '0',
-                width: '100px',
-                height: '100px',
-                background: `linear-gradient(135deg, ${service.color}20, transparent)`,
-                borderRadius: '0 1rem 0 100px',
-                zIndex: 0
-              }} />
             </motion.div>
           ))}
         </div>
-
-        {/* Additional Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          style={{
-            textAlign: 'center',
-            marginTop: '4rem',
-            padding: '2rem',
-            background: 'linear-gradient(135deg, #003366, #1e3a8a)',
-            borderRadius: '1rem',
-            color: 'white'
-          }}
-        >
-          <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-            Besoin d'un devis personnalisé ?
-          </h3>
-          <p style={{ marginBottom: '1.5rem', opacity: 0.9 }}>
-            Contactez-nous pour obtenir un devis gratuit et adapté à vos besoins spécifiques.
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-secondary"
-            style={{
-              background: 'transparent',
-              border: '2px solid white',
-              color: 'white'
-            }}
-          >
-            Demander un Devis
-          </motion.button>
-        </motion.div>
       </div>
     </section>
   );
